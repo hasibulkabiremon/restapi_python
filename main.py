@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy #ORM(object relational mapper)
 
 app = Flask(__name__)
@@ -29,9 +29,23 @@ with app.app_context():
 #create Routes
 @app.route("/")
 def home():
-    return "Hello!"
+    return jsonify({"message":"This is Flask json response!"})
 
+@app.route("/destinations", methods =["GET"])
+def get_destinations():
+    destinations = Destination.query.all()
+    if destinations:
+        return jsonify([destination.to_dict()] for destination in destinations)
+    else:
+        return jsonify({"error":"Destinations not found!"})
 
+@app.route("/destinations/<int:destination_id>", methods =["GET"])
+def get_destination(destination_id):
+    destination = Destination.query.get(destination_id)
+    if destination:
+        return jsonify(destination.to_dict())
+    else:
+        return jsonify({"error":"Destination not found!"})
 
 if __name__ == "__main__":
     app.run(debug=True)
