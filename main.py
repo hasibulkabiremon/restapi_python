@@ -35,7 +35,7 @@ def home():
 def get_destinations():
     destinations = Destination.query.all()
     if destinations:
-        return jsonify([destination.to_dict()] for destination in destinations)
+        return jsonify([destination.to_dict() for destination in destinations])
     else:
         return jsonify({"error":"Destinations not found!"}), 404
 
