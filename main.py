@@ -37,7 +37,7 @@ def get_destinations():
     if destinations:
         return jsonify([destination.to_dict()] for destination in destinations)
     else:
-        return jsonify({"error":"Destinations not found!"})
+        return jsonify({"error":"Destinations not found!"}), 404
 
 @app.route("/destinations/<int:destination_id>", methods =["GET"])
 def get_destination(destination_id):
@@ -45,7 +45,23 @@ def get_destination(destination_id):
     if destination:
         return jsonify(destination.to_dict())
     else:
-        return jsonify({"error":"Destination not found!"})
+        return jsonify({"error":"Destination not found!"}), 404
+    
+
+#POST
+@app.route("/destinations", methods=["POST"])
+def add_destination():
+    data = request.get_json()
+    new_destination = Destination()
+    new_destination.destination= data["destination"]
+    new_destination.country= data["country"]
+    new_destination.rating=data["rating"]
+
+    db.session.add(new_destination)
+    db.session.commit()
+
+    return jsonify(new_destination.to_dict()), 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)
